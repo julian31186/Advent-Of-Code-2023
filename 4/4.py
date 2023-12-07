@@ -12,8 +12,6 @@ with open("input.txt") as f:
         else:
             arr.append(row)
 
-scores = defaultdict(int)
-
 def one():
     total = 0
     for i,row in enumerate(arr):
@@ -27,29 +25,35 @@ def one():
         for num in winning_mine[0].split(" "):
             if num != '' and int(num) in mine: 
                 match += 1
-        
-        scores[i] = match
         total += (2**(match - 1)) if match > 0 else 0
         
     #print(total)
     return total
         
 def two():
-    one()
-    print(scores)
-    total = len(scores)
-    q = deque()
-    for k,v in scores.items(): q.append((k,v))
+    total = len(arr) #make len of scores (1 for each card we have)
+    counts = [1] * len(arr)
+    wins = defaultdict(int)
+    for i,row in enumerate(arr):
+        winning_mine = row.split(":")[1].split("|")
+        mine = set()
+        match = 0
+        for num in winning_mine[1].split(" "):
+            if num != "": mine.add(int(num))
+        
+        #print(winning_mine[0].split(" "))
+        for num in winning_mine[0].split(" "):
+            if num != '' and int(num) in mine: 
+                match += 1
+        wins[i] = match
     
-    while q:
-        k,v = q.popleft()
-        total += v
-        for i in range(k + 1, k + 1 + v):
-            q.append((i,scores[i]))
-    
-    
-    print(total)
-    return total
+    for i in range(len(counts) -1, -1, -1):
+        for j in range(i + 1, i + 1 + wins[i]):
+            counts[i] += counts[j]
+            
+    print(counts)
+    print(sum(counts))
+    return sum(counts)
 
 if __name__ == "__main__":
     one() if part_one else two()
