@@ -47,11 +47,15 @@ def two():
         return (time - x) * x > distance
     low = math.inf
     high = 0
-    for i in range(1,time + 1): 
-        #print(i,check(i))
+    for i in range(1,time + 1):
+        if check(i):
+            low = min(low,i)
+            break
+    for i in range(time,0,-1):
         if check(i):
             high = max(high,i)
-            low = min(low,i)
+            break
+            
             
     res = (high - low) + 1
     print(res)
