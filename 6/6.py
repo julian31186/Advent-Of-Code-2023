@@ -1,4 +1,3 @@
-import bisect
 import math
 
 part_one = False
@@ -44,12 +43,6 @@ def two():
     time = int(time)
     distance = int(distance)
     
-    #Test
-    # time = 7
-    # distance = 9
-    
-    #print([i for i in range(1,time + 1)])
-    
     def check(x):
         return (time - x) * x > distance
     low = math.inf
@@ -60,8 +53,6 @@ def two():
             high = max(high,i)
             low = min(low,i)
             
-    #print(low,high)
-
     res = (high - low) + 1
     print(res)
     return res
