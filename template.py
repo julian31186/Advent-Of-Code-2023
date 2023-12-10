@@ -2,13 +2,10 @@ part_one = True
 arr = []
 res = 0
 
-with open("input.txt") as f:
-    for row in f:
-        arr.append(row)
+arr = open("input.txt").read().split("\n")
 
 def one():
     pass
-    
 
 def two():
     pass
