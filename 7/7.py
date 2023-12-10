@@ -1,13 +1,14 @@
 from collections import Counter,defaultdict
 from functools import cmp_to_key
 
-part_one = True
+part_one = False
 arr = []
 res = 0
 
 arr = open("input.txt").read().split("\n")
 
-cards = { "A" : 14, "K" : 13, "Q" : 12, "J" : 11, "T" : 10, "9" : 9, "8" : 8, "7" : 7, "6" : 6, "5" : 5, "4" : 4, "3" : 3, "2" : 2 }
+#For part 1 set J in this dict to 11 and it should work fine (too lazy to move each part into a seperate file)
+cards = { "A" : 14, "K" : 13, "Q" : 12, "J" : 1, "T" : 10, "9" : 9, "8" : 8, "7" : 7, "6" : 6, "5" : 5, "4" : 4, "3" : 3, "2" : 2 }
 sets = { "high_card" : [], "one_pair" : [], "two_pair" : [], "three_kind" : [], "full_house" : [], "four_kind" : [], "five_kind" : [] }
 
 def compare(a,b):
@@ -20,25 +21,47 @@ def compare(a,b):
             return -1
     return 0
 
+def get_strongest(hand):
+    maxv = 0
+    res = ""
+    for c in hand:
+        if maxv < cards[c]:
+            maxv = cards[c]
+            res = c
+    return res
+
 def five_of_kind(hand):
-    for i in range(len(hand) - 1):
-        if hand[i] != hand[i + 1]: return False
-    return True
+    cache = Counter(hand)
+    return max(cache.values()) + cache["J"] == 5 or max(cache.values()) == 5
 
 def four_of_a_kind(hand):
     cache = Counter(hand)
+    for k,v in cache.items():
+        if v + cache["J"] == 4: return True
     return max(cache.values()) == 4
 
 def full_house(hand):
     cache = Counter(hand)
+    jokers = cache["J"]
+    for k,v in cache.items():
+        if k != "J":
+            if v + jokers == 3: 
+                for nk,nv in cache.items():
+                    if nk != k and nk != "J":
+                        if nv == 2: return True
     return max(cache.values()) == 3 and min(cache.values()) == 2
 
 def three_of_a_kind(hand):
     cache = Counter(hand)
-    return max(cache.values()) == 3
+    return max(cache.values()) + cache["J"] == 3 or max(cache.values()) == 3
 
 def two_pair(hand):
     cache = Counter(hand)
+    strongest = get_strongest(hand)
+    if 2 - cache[strongest] > 0 and cache["J"] >= (2 - cache[strongest]): 
+        temp = (2 - cache[strongest])
+        cache[strongest] += (2 - cache[strongest])
+        cache['J'] -= temp
     pair = defaultdict(int)
     for k,v in cache.items():
         pair[v] += 1
@@ -47,6 +70,8 @@ def two_pair(hand):
 def one_pair(hand):
     cache = Counter(hand)
     pair = defaultdict(int)
+    strongest = get_strongest(hand)
+    if cache[strongest] == 1 and cache['J'] >= 1: return True
     for k,v in cache.items():
         pair[v] += 1
     return pair[2] == 1
@@ -95,7 +120,21 @@ def one():
     return res
 
 def two():
-    pass
+    res = 0
+    for row in arr:
+        curr = row.split(" ")
+        check(curr[0],curr[1])
+    
+    print(sets)
+    idx = 1
+    for k,v in sets.items():
+        for i in v:
+            #print(k,int(i[1]),idx)
+            res += (int(i[1]) * idx)
+            idx += 1
+    
+    print(res)
+    return res
 
 if __name__ == "__main__":
     one() if part_one else two()
