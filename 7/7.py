@@ -32,12 +32,16 @@ def get_strongest(hand):
 
 def five_of_kind(hand):
     cache = Counter(hand)
-    return max(cache.values()) + cache["J"] == 5 or max(cache.values()) == 5
+    for k,v in cache.items():
+        if k != "J":
+            if v + cache["J"] == 5: return True
+    return max(cache.values()) == 5
 
 def four_of_a_kind(hand):
     cache = Counter(hand)
     for k,v in cache.items():
-        if v + cache["J"] == 4: return True
+        if k != "J":
+            if v + cache["J"] == 4: return True
     return max(cache.values()) == 4
 
 def full_house(hand):
@@ -53,7 +57,10 @@ def full_house(hand):
 
 def three_of_a_kind(hand):
     cache = Counter(hand)
-    return max(cache.values()) + cache["J"] == 3 or max(cache.values()) == 3
+    for k,v in cache.items():
+        if k != "J":
+            if v + cache["J"] == 3: return True
+    return max(cache.values()) == 3
 
 def two_pair(hand):
     cache = Counter(hand)
@@ -125,7 +132,7 @@ def two():
         curr = row.split(" ")
         check(curr[0],curr[1])
     
-    print(sets)
+    #print(sets)
     idx = 1
     for k,v in sets.items():
         for i in v:
